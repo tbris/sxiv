@@ -119,8 +119,8 @@ void win_init(win_t *win)
 	f = win_res(db, RES_CLASS ".font", "monospace-8");
 	win_init_font(e, f);
 
-	bg = win_res(db, RES_CLASS ".background", "white");
-	fg = win_res(db, RES_CLASS ".foreground", "black");
+	bg = win_res(db, RES_CLASS ".background", "black");
+	fg = win_res(db, RES_CLASS ".foreground", "#990099");
 	win_alloc_color(e, bg, &win->bg);
 	win_alloc_color(e, fg, &win->fg);
 
@@ -258,6 +258,7 @@ void win_open(win_t *win)
 	win->buf.h = e->scrh;
 	win->buf.pm = XCreatePixmap(e->dpy, win->xwin,
 	                            win->buf.w, win->buf.h, e->depth);
+	/* WHAT IS THIS */
 	XSetForeground(e->dpy, gc, win->bg.pixel);
 	XFillRectangle(e->dpy, win->buf.pm, gc, 0, 0, win->buf.w, win->buf.h);
 	XSetWindowBackgroundPixmap(e->dpy, win->xwin, win->buf.pm);
@@ -340,6 +341,7 @@ void win_clear(win_t *win)
 		win->buf.pm = XCreatePixmap(e->dpy, win->xwin,
 		                            win->buf.w, win->buf.h, e->depth);
 	}
+	/* background */
 	XSetForeground(e->dpy, gc, win->bg.pixel);
 	XFillRectangle(e->dpy, win->buf.pm, gc, 0, 0, win->buf.w, win->buf.h);
 }
@@ -397,23 +399,27 @@ void win_draw_bar(win_t *win)
 	d = XftDrawCreate(e->dpy, win->buf.pm, DefaultVisual(e->dpy, e->scr),
 	                  DefaultColormap(e->dpy, e->scr));
 
-	XSetForeground(e->dpy, gc, win->fg.pixel);
+	/* bar background */
+	XSetForeground(e->dpy, gc, win->bg.pixel);
 	XFillRectangle(e->dpy, win->buf.pm, gc, 0, win->h, win->w, win->bar.h);
 
+	/* WHAT IS THIS */
 	XSetForeground(e->dpy, gc, win->bg.pixel);
-	XSetBackground(e->dpy, gc, win->fg.pixel);
+	XSetBackground(e->dpy, gc, win->bg.pixel);
 
 	if ((len = strlen(r->buf)) > 0) {
 		if ((tw = TEXTWIDTH(win, r->buf, len)) > w)
 			return;
 		x = win->w - tw - H_TEXT_PAD;
 		w -= tw;
-		win_draw_text(win, d, &win->bg, x, y, r->buf, len, tw);
+		/* right bar fg */
+		win_draw_text(win, d, &win->fg, x, y, r->buf, len, tw);
 	}
 	if ((len = strlen(l->buf)) > 0) {
 		x = H_TEXT_PAD;
 		w -= 2 * H_TEXT_PAD; /* gap between left and right parts */
-		win_draw_text(win, d, &win->bg, x, y, l->buf, len, w);
+		/* left bar fg */
+		win_draw_text(win, d, &win->fg, x, y, l->buf, len, w);
 	}
 	XftDrawDestroy(d);
 }
@@ -473,4 +479,3 @@ void win_cursor_pos(win_t *win, int *x, int *y)
 	if (!XQueryPointer(win->env.dpy, win->xwin, &w, &w, &i, &i, x, y, &ui))
 		*x = *y = 0;
 }
-

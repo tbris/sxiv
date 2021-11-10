@@ -13,7 +13,7 @@ AUTORELOAD = inotify
 HAVE_GIFLIB = 1
 
 # enable features requiring libexif (-lexif)
-HAVE_LIBEXIF = 1
+HAVE_LIBEXIF = 0
 
 cflags = -std=c99 -Wall -pedantic $(CFLAGS)
 cppflags = -I. $(CPPFLAGS) -D_XOPEN_SOURCE=700 \
@@ -85,4 +85,3 @@ uninstall:
 	rm -f $(DESTDIR)$(MANPREFIX)/man1/sxiv.1
 	@echo "REMOVE share/sxiv/"
 	rm -rf $(DESTDIR)$(PREFIX)/share/sxiv
-
